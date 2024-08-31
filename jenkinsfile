@@ -1,32 +1,15 @@
 pipeline {
     agent any
-    tools{
-     jdk 'Java21'
-    }
-    stages {
-        stage('Clean workspace and Navigate to the folder'){
+
+    stages {        
+        stage('Build docker image'){
             steps{
-                cleanWs()
+                 bat 'docker build -t  samson43/flaskapp .'
             }
         }
-        stage('Build') {
-            steps {
-                bat 'docker build -t flaskapp .'
-            }
-        }
-        stage('Jar') {
-            steps {
-                bat 'jar cfe myJar.jar Pattern Pattern.class'
-            }
-        }
-        stage('Run') {
-            steps {
-                bat 'java -jar myJar.jar'
-            }
-        }
-        stage('Artifact'){
+        stage('Build and run contaner'){
             steps{
-                archiveArtifacts artifacts: '*.jar', followSymlinks: false
+                bat 'docker run -d -it samson43/flaskapp'
             }
         }
     }
